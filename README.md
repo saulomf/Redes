@@ -15,7 +15,7 @@ Este trabalho foi desenvolvido em Linux utilizando Python 3.6.8. Confira se tem 
 
 2. Para iniciar o cliente HTTP desenvolvido para receber páginas Web, utilize o seguinte comando:
     ```
-    sudo python3 servidorhttp.py
+    sudo python3 clientehttp.py
     ```
 
 3. Para utilizar o cliente, digite o nome do método desejado seguido do nome do recurso desejado. Ex: 
