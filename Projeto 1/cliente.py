@@ -1,8 +1,7 @@
  # Redes de Computadores - 2019/2
  # Prof. Priscila Solis Mendez
- # Projeto 1 - Cliente HTTP
+ # Projeto 2 - Cliente HTTP
  # Integrantes:
- # Daniel Oliveira ()
  # Joao Antonio Moraes (16/0126975)
  # Saulo Feitosa ()
 
@@ -12,7 +11,7 @@ import sys
 import os
 
 host = '127.0.0.1' #endereco do host local
-port = 80  # web
+port = 85  # web
 
 # Criacao do socket
 print('# Criando socket')
