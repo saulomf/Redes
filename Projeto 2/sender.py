@@ -1,5 +1,6 @@
 import socket
 import sys
+import time
 
 host = "127.0.0.1"
 port_receiver = 5000
@@ -16,12 +17,25 @@ except socket.error:
     sys.exit()
 
 while True:
-    for letra in mensagem:
-        msg = header + ', ' + letra
-        sent = sock.sendto(msg.encode(), dest)
-        header = '1'
-        #resp = sock.recvfrom(4096)
-        #print(resp)
+    msg = header + ', ' + mensagem
+    sent = sock.sendto(msg.encode(), dest)
+    tempo = time.time()
+    sock.settimeout(5)
+    resp = ''
+    try: 
+        resp = sock.recvfrom(4096)
+    except socket.timeout:
+        print('Nenhum dado recebido. Reenviando...')
+        time.sleep(1)
+        continue
+    print(resp)
+    if resp <> '':
+        if header == '1':
+            header = '0'
+        else:
+            header = '1'
+    time.sleep(1)
+        
 
 
 
