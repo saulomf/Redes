@@ -16,7 +16,7 @@ index = 0
 buffer_size = 2048
 
 # Criacao do socket
-try: 
+try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 except socket.error:
     print('Falha ao criar socket')
@@ -33,7 +33,7 @@ except:
 while (ack_inicio):
     sock.sendto(inicio.encode(), dest)
     sock.settimeout(0.1)
-    try: 
+    try:
         resp, address = sock.recvfrom(1024)
     except socket.timeout:
         print('Nenhum dado recebido. Reenviando...')
@@ -50,16 +50,16 @@ while (conteudo):
     header = bit + '$*$'
 
     # Selecao de numero randomico para gerar perda de pacote
-    if random.randint(0,20) <> 7: 
+    if random.randint(0,20) != 7:
         sent = sock.sendto(header.encode() + conteudo, dest)
-    
+
     # Define um timeout para o socket
     sock.settimeout(0.1)
     resp = ''
 
     # Espera a resposta do outro host. Se nada eh recebido, volta para o inicio
     # da iteracao e reenvia o pacote.
-    try: 
+    try:
         resp, address = sock.recvfrom(1024)
     except socket.timeout:
         print('Nenhum dado recebido. Reenviando...')
@@ -67,8 +67,8 @@ while (conteudo):
         continue
 
     print(resp)
-    if resp <> '':
-        # Se o bit do ACK eh o mesmo que foi enviado, retorna para o inicio da 
+    if resp != '':
+        # Se o bit do ACK eh o mesmo que foi enviado, retorna para o inicio da
         # iteracao e reenvia o pacote. O bit esperado eh o bit seguinte.
         # Ex.: se enviou pacote com bit 0, aguarda ACK com bit 1.
         if resp[4] == bit:
@@ -86,9 +86,3 @@ while (conteudo):
 # Envia a mensagem de finalizacao da transferencia
 sent = sock.sendto(fim.encode(), dest)
 sock.close()
-
-        
-
-
-
-

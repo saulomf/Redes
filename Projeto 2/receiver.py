@@ -49,9 +49,9 @@ while (receber):
             print(msg[0])
 
             # Se o pacote eh o que esta sendo esperado: adiciona
-            # os dados no arquivo (descarta o header) e atualiza 
+            # os dados no arquivo (descarta o header) e atualiza
             # o bit do proximo pacote esperado. Do contrario, reenvia
-            # o ACK. 
+            # o ACK.
             if msg[0] == prox_msg:
                 payload = bytearray(msg)
                 arquivo.write(payload[4:])
@@ -60,7 +60,7 @@ while (receber):
                 else:
                     prox_msg = '1'
             resp = 'ACK ' + prox_msg
-            if random.randint(0, 20) <> 13:
+            if random.randint(0, 20) != 13:
                 sock.sendto(resp.encode(), address)
 
 sock.close()
