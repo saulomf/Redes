@@ -49,9 +49,12 @@ while (receber):
             arquivo.close()
         else:
             # Trecho que lida com o recebimento do arquivo em si
-            print(msg[0])
+            #print(msg[0])
+            print(pacotes_recebidos)
+            print(len(msg_completa))
 
             if msg[0] == prox_msg:#Checa se a mensagem foi recebida
+                print("chegou")
                 if pacotes_recebidos == 5:#Checa se ja foram enviados 5 pacotes
                 #Recebe o pacote que tinha dado erro no primeiro envio e o coloca em sua posicao na lista
                     payload = bytearray(msg)
@@ -64,8 +67,7 @@ while (receber):
                 if len(msg_completa) == 5:#Checa se todos os 5 pacotes ja foram recebidos com sucesso
                 #Concatena todos os pacotes e os escreve no arquivo
                     payload = msg_completa[0] + msg_completa[1] + msg_completa[2] + msg_completa[3] + msg_completa[4]
-                    msg_completa.clear()
-                    pacotes_recebidos = 0
+                    msg_completa = []
                     arquivo.write(payload)
                     pacotes_recebidos = -1
                 if msg[0] == '1':
@@ -73,12 +75,14 @@ while (receber):
                 else:
                     prox_msg = '1'
 
-                resp = 'ACK ' + prox_msg
-                if random.randint(0, 20) != 13:
-                    sock.sendto(resp.encode(), address)
-
             else:#Caso o pacote nao tenha sido recebido salva se o indice onde ele deveria ter sido inserido para posterior insercao
                 erros_indice.append(pacotes_recebidos)
+
+            resp = 'ACK ' + prox_msg
+            if random.randint(0, 20) != 13:
+                sock.sendto(resp.encode(), address)
+            #time.sleep(1)
+
 
             pacotes_recebidos = pacotes_recebidos + 1
 

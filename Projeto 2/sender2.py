@@ -34,7 +34,7 @@ except:
 # mensagem ser respondida
 while (ack_inicio):
     sock.sendto(inicio.encode(), dest)
-    sock.settimeout(1)
+    sock.settimeout(0.1)
     try:
         resp, address = sock.recvfrom(1024)
     except socket.timeout:
@@ -51,10 +51,11 @@ while (conteudo):
     while i<5:
         # Header: bit de controle + delimitador
         header = bit + '$*$'
-        sent = sock.sendto(header.encode() + conteudo, dest)
+        if random.randint(0,20) != 7:
+            sent = sock.sendto(header.encode() + conteudo, dest)
 
         # Define um timeout para o socket
-        sock.settimeout(1)
+        sock.settimeout(0.1)
         resp = ''
 
 
@@ -68,20 +69,35 @@ while (conteudo):
             continue
 
         print(resp)
-        if resp != '':#Empilha o indice e o conteudo dos pacotes que apresentaram erro
+        if resp != '':
+            # Se o bit do ACK eh o mesmo que foi enviado, retorna para o inicio da
+            # iteracao e reenvia o pacote. O bit esperado eh o bit seguinte.
+            # Ex.: se enviou pacote com bit 0, aguarda ACK com bit 1.
+            if resp[4] == bit:
+                print('a')
+                continue
+            if bit == '1':
+                bit = '0'
+            else:
+                bit = '1'
+        else:#Empilha o indice e o conteudo dos pacotes que apresentaram erro
+            print("chegou")
             erros_indice.append(header)
             erros_imagem.append(conteudo)
-            # Le mais um pedaco da imagem
+
+        # Le mais um pedaco da imagem
         conteudo = arquivo_imagem.read(buffer_size)
         #time.sleep(1)
         i = i+1
 
+
     while(erros_indice):#Reenvia os pacotes que apresentaram erro
         header2 = erros_indice[0]
         conteudo2 = erros_imagem[0]
-        sent = sock.sendto(header2.encode() + conteudo2, dest)
+        if random.randint(0,20) != 7:
+            sent = sock.sendto(header2.encode() + conteudo2, dest)
         # Define um timeout para o socket
-        sock.settimeout(1)
+        sock.settimeout(0.1)
         resp = ''
         # Espera a resposta do outro host. Se nada eh recebido, volta para o inicio
         # da iteracao e reenvia o pacote.
@@ -89,11 +105,19 @@ while (conteudo):
             resp, address = sock.recvfrom(1024)
         except socket.timeout:
             print('Nenhum dado recebido. Reenviando...')
-            #time.sleep(1)
+            time.sleep(1)
             continue
 
         print(resp)
-        if resp == '':#Remove da lista os pacotes que foram reenviados sem erros
+        if resp == '':
+            if resp[4] == bit:
+                print('a')
+                continue
+                if bit == '1':
+                    bit = '0'
+                else:
+                    bit = '1'
+        else:#Remove da lista os pacotes que foram reenviados sem erros
             erros_indice.remove(header2)
             erros_imagem.remove(conteudo2)
 
