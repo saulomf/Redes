@@ -56,6 +56,11 @@ while (receber):
             print(pacotes_recebidos)
             print(len(msg_completa))
             index_msg = msg[0]
+
+            # O algoritmo tem que ignorar pacote fora da janela, ou seja:
+            # - que ja tenha sido escrito no arquivo ou
+            # - que estejam muito alem do esperado (5 unidades alem do esperado) 
+
             # Se a mensagem que chega eh a esperada, escreve o payload no arquivo
             if (index_esperado == index_msg):
                 payload = bytearray(msg)
