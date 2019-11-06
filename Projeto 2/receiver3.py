@@ -1,4 +1,4 @@
-import socket
+simport socket
 import sys
 import os
 import time
@@ -9,10 +9,12 @@ port = 5000
 endereco_local = (host, port)
 mensagem = ''
 prox_msg = '0'
+tamanho_janela = 5
 receber = True
 msg_completa = []
 erros_indice = []
 pacotes_recebidos = 0
+index_esperado = 0
 
 # Criacao do socket
 try:
@@ -54,30 +56,18 @@ while (receber):
             print(pacotes_recebidos)
             print(len(msg_completa))
             index_msg = msg[0]
-                print("chegou")
-                if pacotes_recebidos == 5:#Checa se ja foram enviados 5 pacotes
-                #Recebe o pacote que tinha dado erro no primeiro envio e o coloca em sua posicao na lista
-                    payload = bytearray(msg)
-                    msg_completa.insert(erros_indice[0], payload[4:])
-                    erros_indice.pop(0)
-                    pacotes_recebidos = pacotes_recebidos - 1
-                else:
-                    payload = bytearray(msg)
-                    msg_completa.append(payload[4:])
-                if len(msg_completa) == 5:#Checa se todos os 5 pacotes ja foram recebidos com sucesso
-                #Concatena todos os pacotes e os escreve no arquivo
-                    payload = msg_completa[0] + msg_completa[1] + msg_completa[2] + msg_completa[3] + msg_completa[4]
-                    msg_completa = []
-                    arquivo.write(payload)
-                    pacotes_recebidos = -1
-                if msg[0] == '1':
-                    prox_msg = '0'
-                else:
-                    prox_msg = '1'
-
-            else: #Caso o pacote nao tenha sido recebido salva se o indice onde ele deveria ter sido inserido para posterior insercao
-                #erros_indice.append(pacotes_recebidos)
-
+            # Se a mensagem que chega eh a esperada, escreve o payload no arquivo
+            if (index_esperado == index_msg):
+                payload = bytearray(msg)
+                arquivo.write(payload[4:])
+                index_esperado += 1
+                if (index_esperado == 10):
+                    index_esperado = 0
+            else:
+                # Coloca a mensagem num buffer. Quando a mensagem certa chegar, organizar o buffer e
+                escrever no arquivo
+            
+            # Envia o ACK da mensagem, a nao ser que o frame que chega esteja fora da janela
             resp = 'ACK ' + index_msg
             sock.sendto(resp.encode(), address)
             if random.randint(0, 20) != 13:
